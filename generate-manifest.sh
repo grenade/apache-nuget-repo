@@ -7,9 +7,9 @@
 
 unzip "*.nupkg" "*.nuspec"
 xsltproc transform.xsl *.nuspec | tee Packages
-rm -f ./*.nuspec
 #for nuspec in ./*.nuspec; do
 #  f="${nuspec##*/}"
 #  id="${f%.*}"
 #  echo $id
 #done
+rm -f ./*.nuspec
