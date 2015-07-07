@@ -1,7 +1,10 @@
 <?xml version="1.0" ?>
 <xsl:stylesheet
   version="1.0"
-  xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+  xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+  xmlns="http://www.w3.org/2005/Atom">
   <xsl:output method="xml" indent="yes" omit-xml-declaration="yes" />
   <xsl:template match="/">
     <feed>
@@ -14,7 +17,8 @@
           </xsl:element>
           <xsl:element name="summary">
             <xsl:attribute name="type">text</xsl:attribute>
-            <xsl:value-of select="p:summary"/></xsl:element>
+            <xsl:value-of select="p:summary"/>
+          </xsl:element>
           <xsl:element name="author">
             <xsl:element name="name"><xsl:value-of select="p:authors"/></xsl:element>
           </xsl:element>
