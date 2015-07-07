@@ -1,3 +1,4 @@
 - [x] put all package versions in a folder named with the package id (or find a mechanism for extracting distinct package names in bash)
 - [x] update manifest generator to only parse latest versions of packages
 - [x] create a transform that generates the package html description
+- [ ] create a transform that generates a package index html page
