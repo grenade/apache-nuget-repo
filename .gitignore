@@ -1,0 +1,6 @@
+html/*.html
+nupkg/*.nupkg
+nuspec/*.nuspec
+latest/*.nuspec
+Packages
+.htaccess
