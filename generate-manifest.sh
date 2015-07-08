@@ -15,12 +15,12 @@ for path in nupkg/*.nupkg; do
   package_version=$(echo "$package" | sed "s/^$package_id\.//")
   unzip $path "*.nuspec"
   mv "$package_id.nuspec" "nuspec/$package_id.$package_version.nuspec"
-  xsltproc package-html.xslt "nuspec/$package_id.$package_version.nuspec" > html/$package.html
+  xsltproc xsl/package-html.xslt "nuspec/$package_id.$package_version.nuspec" > html/$package.html
   if ! inArray $package_id "${package_ids[@]}"; then
     package_ids+=($package_id)
   fi
 done
-xsltproc packages-manifest.xslt nuspec/*.nuspec | sed ':a;N;$!ba;s/<\/feed>\n<feed[^>]*>\n//g' > Packages
+xsltproc xsl/packages-manifest.xslt nuspec/*.nuspec | sed ':a;N;$!ba;s/<\/feed>\n<feed[^>]*>\n//g' > Packages
 echo > .htaccess
 for package_id in "${package_ids[@]}"; do
   latest=$(ls nupkg/$package_id.*.nupkg | sort --version-sort -r | head -1)
@@ -30,5 +30,5 @@ for package_id in "${package_ids[@]}"; do
   package_version=$(echo "$package" | sed "s/^$package_id\.//")
   cp nuspec/$package_id.$package_version.nuspec latest/
 done
-xsltproc packages-manifest.xslt latest/*.nuspec | sed ':a;N;$!ba;s/<\/feed>\n<feed[^>]*>\n//g' | xsltproc packages-html.xslt - > html/index.html
+xsltproc xsl/packages-manifest.xslt latest/*.nuspec | sed ':a;N;$!ba;s/<\/feed>\n<feed[^>]*>\n//g' | xsltproc xsl/packages-html.xslt - > html/index.html
 rm -f nuspec/*.nuspec latest/*.nuspec
