@@ -11,4 +11,4 @@ curl -L http://chocolatey.org/api/v2/package/git.install/1.7.10 -o nupkg/git.ins
 curl -L http://chocolatey.org/api/v2/package/nxlog/2.8.1248 -o nupkg/nxlog.2.8.1248.nupkg
 curl -L http://chocolatey.org/api/v2/package/nxlog/2.7.1191 -o nupkg/nxlog.2.7.1191.nupkg
 curl -L http://chocolatey.org/api/v2/package/nxlog/2.6.1131 -o nupkg/nxlog.2.6.1131.nupkg
-curl -L http://chocolatey.org/api/v2/package/nxlog/2.5.1089 -o nupkg/nxlog.2.5.1089nupkg
+curl -L http://chocolatey.org/api/v2/package/nxlog/2.5.1089 -o nupkg/nxlog.2.5.1089.nupkg
