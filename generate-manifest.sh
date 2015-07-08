@@ -26,8 +26,8 @@ for package_id in "${package_ids[@]}"; do
   latest=$(ls nupkg/$package_id.*.nupkg | sort --version-sort -r | head -1)
   file=${latest##*/}
   package=${file%.nupkg}
-  echo RedirectMatch 302 ^(.*)/api/v2/package/$package_id/?$ $1/$latest >> .htaccess
-  echo RedirectMatch 302 ^(.*)/packages/$package_id/?$ $1/html/$package.html >> .htaccess
+  echo "RedirectMatch 302 ^(.*)/api/v2/package/$package_id/?$ $1/$latest" >> .htaccess
+  echo "RedirectMatch 302 ^(.*)/packages/$package_id/?$ $1/html/$package.html" >> .htaccess
   package_version=$(echo "$package" | sed "s/^$package_id\.//")
   cp nuspec/$package_id.$package_version.nuspec latest/
 done
