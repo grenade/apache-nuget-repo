@@ -2,9 +2,43 @@
 
 These scripts and xsl transforms, enable hosting of a simple NuGet repository under Apache (on Linux).
 
+## Installation (on Fedora)
+
+- If you don't already have Apache:
+
+        # install apache
+        sudo dnf install -y httpd
+        # start apache
+        service httpd start
+        # make apache start on system boot
+        chkconfig httpd on
+
+- Create your repository:
+
+        sudo mkdir -p /data/repos && sudo chown -R $(whoami):$(whoami) /data
+        # if running `getenforce` returns 'Enforcing',
+        # run the following command to tell selinux to allow serving up the /data directory
+        sudo chcon -R -t httpd_sys_content_t /data
+        # clone this tool as your repository root
+        git clone https://github.com/grenade/apache-nuget-repo.git /data/repos/nuget
+        # create your packages folder
+        mkdir /data/repos/nuget/nupkg
+        cd /data/repos/nuget
+        # download some packages (optional, but useful for testing)
+        chmod u+x /data/repos/nuget/misc/download-some-packages.sh
+        ./misc/download-some-packages.sh
+        # modify /data/repos/nuget/misc/data.conf to your liking, then:
+        sudo cp /data/repos/nuget/misc/data.conf /etc/httpd/conf.d/
+        sudo ln -s /data/repos /var/www/html/
+        service httpd restart
+        # make generate-manifest executable and run it
+        chmod u+x generate-manifest.sh
+        ./generate-manifest.sh
+
 ## Usage
 
 Run `generate-manifest.sh` from the NuGet repository root (the parent folder of 'nupkg' where nupkg contains *.nupkg files), maybe: '/data/repos/nuget'.
+It needs to be re-run whenever you add, update or remove packages from your nupkg folder.
 
 ## Explanation
 
