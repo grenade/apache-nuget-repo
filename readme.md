@@ -16,21 +16,29 @@ These scripts and xsl transforms, enable hosting of a simple NuGet repository un
 - Create your repository:
 
         sudo mkdir -p /data/repos && sudo chown -R $(whoami):$(whoami) /data
-        # if running `getenforce` returns 'Enforcing',
-        # run the following command to tell selinux to allow serving up the /data directory
-        sudo chcon -R -t httpd_sys_content_t /data
         # clone this tool as your repository root
         git clone https://github.com/grenade/apache-nuget-repo.git /data/repos/nuget
         # create your packages folder
         mkdir /data/repos/nuget/nupkg
-        cd /data/repos/nuget
-        # download some packages (optional, but useful for testing)
-        chmod u+x /data/repos/nuget/misc/download-some-packages.sh
-        ./misc/download-some-packages.sh
+
+- Configure Apache to host your NuGet repo:
+
+        # if running `getenforce` returns 'Enforcing',
+        # run the following command to tell selinux to allow serving up the /data directory
+        sudo chcon -R -t httpd_sys_content_t /data
         # modify /data/repos/nuget/misc/data.conf to your liking, then:
         sudo cp /data/repos/nuget/misc/data.conf /etc/httpd/conf.d/
         sudo ln -s /data/repos /var/www/html/
         service httpd restart
+
+- Populate your repo and manifest:
+
+        cd /data/repos/nuget
+        # download some packages
+        # (optional, but useful for testing, otherwise put your own packages in the nupkg folder)
+        chmod u+x /data/repos/nuget/misc/download-some-packages.sh
+        ./misc/download-some-packages.sh
+        
         # make generate-manifest executable and run it
         chmod u+x generate-manifest.sh
         ./generate-manifest.sh
