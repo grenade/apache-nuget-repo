@@ -20,7 +20,7 @@ for path in nupkg/*.nupkg; do
     package_ids+=($package_id)
   fi
 done
-xsltproc xsl/packages-manifest.xslt nuspec/*.nuspec | sed ':a;N;$!ba;s/<\/feed>\n<feed[^>]*>\n//g' > packages.xml
+xsltproc xsl/packages-manifest.xslt nuspec/*.nuspec | sed ':a;N;$!ba;s/<\/feed>\n<feed[^>]*>\n//g' > Packages
 echo > .htaccess
 for package_id in "${package_ids[@]}"; do
   latest=$(ls nupkg/$package_id.*.nupkg | sort --version-sort -r | head -1)
