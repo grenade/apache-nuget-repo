@@ -50,7 +50,7 @@
                       <li><span>Package Specific</span></li>
                       <li>
                         <xsl:element name="a">
-                          <xsl:attribute name="href">../package/<xsl:value-of select="p:id"/>/<xsl:value-of select="p:version"/></xsl:attribute>
+                          <xsl:attribute name="href">../api/v2/package/<xsl:value-of select="p:id"/>/<xsl:value-of select="p:version"/></xsl:attribute>
                           <xsl:attribute name="title">Download the raw nupkg file.</xsl:attribute>
                           Download
                         </xsl:element>
