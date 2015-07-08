@@ -6,6 +6,8 @@ These scripts and xsl transforms, enable hosting of a simple NuGet repository un
 
 Run `generate-manifest.sh` from the NuGet repository root (the parent folder of 'nupkg' where nupkg contains *.nupkg files), maybe: '/data/repos/nuget'.
 
+## Explanation
+
 The script does the following things (in pretty much the order listed):
 
 - extracts the .nuspec file from the .nupkg files
