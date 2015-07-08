@@ -20,13 +20,14 @@ for path in nupkg/*.nupkg; do
     package_ids+=($package_id)
   fi
 done
-xsltproc xsl/packages-manifest.xslt nuspec/*.nuspec | sed ':a;N;$!ba;s/<\/feed>\n<feed[^>]*>\n//g' > Packages
+xsltproc xsl/packages-manifest.xslt nuspec/*.nuspec | sed ':a;N;$!ba;s/<\/feed>\n<feed[^>]*>\n//g' > packages.xml
 echo > .htaccess
 for package_id in "${package_ids[@]}"; do
   latest=$(ls nupkg/$package_id.*.nupkg | sort --version-sort -r | head -1)
-  echo RedirectMatch 302 ^package/$package_id/?$ $latest >> .htaccess
   file=${latest##*/}
   package=${file%.nupkg}
+  echo RedirectMatch 302 ^(.*)/api/v2/package/$package_id/?$ $1/$latest >> .htaccess
+  echo RedirectMatch 302 ^(.*)/packages/$package_id/?$ $1/html/$package.html >> .htaccess
   package_version=$(echo "$package" | sed "s/^$package_id\.//")
   cp nuspec/$package_id.$package_version.nuspec latest/
 done
