@@ -9,9 +9,18 @@ These scripts and xsl transforms, enable hosting of a simple NuGet repository un
         # install apache
         sudo dnf install -y httpd
         # start apache
-        service httpd start
+        sudo service httpd start
         # make apache start on system boot
-        chkconfig httpd on
+        sudo chkconfig httpd on
+
+- If you don't already have incron:
+
+        # install incron
+        sudo dnf install -y incron
+        # start incron
+        sudo service incrond start
+        # make incron start on system boot
+        sudo chkconfig incrond on
 
 - Create your repository:
 
@@ -20,6 +29,8 @@ These scripts and xsl transforms, enable hosting of a simple NuGet repository un
         git clone https://github.com/grenade/apache-nuget-repo.git /data/repos/nuget
         # create your packages folder
         mkdir /data/repos/nuget/nupkg
+        # make generate-manifest executable
+        chmod u+x generate-manifest.sh
 
 - Configure Apache to host your NuGet repo:
 
@@ -31,27 +42,35 @@ These scripts and xsl transforms, enable hosting of a simple NuGet repository un
         sudo ln -s /data/repos /var/www/html/
         service httpd restart
 
+- Configure incron to regenerate the manifest when changes are detected
+
+        # create an incron user table for your user account:
+        sudo cp misc/incron-nuget-repo.conf /var/spool/incron/$(whoami)
+        sudo chown root:$(whoami) /var/spool/incron/$(whoami)
+        sudo chmod 600 /var/spool/incron/$(whoami)
+        # grant permission to run incron jobs to your user account:
+        echo $(whoami)> incron.allow
+        sudo mv incron.allow /etc/
+        sudo service incrond restart
+
 - Populate your repo and manifest:
 
         cd /data/repos/nuget
         # download some packages
         # (optional, but useful for testing, otherwise put your own packages in the nupkg folder)
         chmod u+x /data/repos/nuget/misc/download-some-packages.sh
-        ./misc/download-some-packages.sh
-        
-        # make generate-manifest executable and run it
-        chmod u+x generate-manifest.sh
-        ./generate-manifest.sh
+        ./misc/download-some-packages.sh        
 
 ## Usage
 
-Run `generate-manifest.sh` from the NuGet repository root (the parent folder of 'nupkg' where nupkg contains *.nupkg files), maybe: '/data/repos/nuget'.
-It needs to be re-run whenever you add, update or remove packages from your nupkg folder.
+generate-manifest.sh should run (under incron) whenever a package is added or removed from the packages folder. After running the installation instructions above, you should be able to browse packages at http://localhost/repos/nuget/html/
 
 ## Explanation
 
-The script does the following things (in pretty much the order listed):
+The generate-manifest script does the following things (in pretty much the order listed):
 
+- locks execution so that only a single instance of the script can run at a given moment
+- changes the current working directory to the folder containing the script
 - extracts the .nuspec file from the .nupkg files
 - moves the extracted .nuspec file from *repo_root*/*pkg_id*.nuspec to *repo_root*/nuspec/*pkg_id*.*pkg_ver*.nuspec
 - performs an XSL transform on each .nuspec file to generate an html description of the package at *repo_root*/html/*pkg_id*.*pkg_ver*.html

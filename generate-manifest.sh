@@ -1,10 +1,21 @@
 #!/bin/bash
 
-inArray () {
+LOCKFILE="/var/lock/`basename $0`"
+LOCKFD=99
+_lock() { flock -$1 $LOCKFD; }
+_no_more_locking() { _lock u; _lock xn && rm -f $LOCKFILE; }
+_prepare_locking() { eval "exec $LOCKFD>\"$LOCKFILE\""; trap _no_more_locking EXIT; }
+_prepare_locking
+exlock() { _lock x; }
+unlock() { _lock u; }
+
+exlock
+in_array () {
   local e
   for e in "${@:2}"; do [[ "$e" == "$1" ]] && return 0; done
   return 1
 }
+cd $( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 package_ids=()
 mkdir -p nuspec latest html
 rm -f nuspec/*.nuspec latest/*.nuspec html/*.html
@@ -16,7 +27,7 @@ for path in nupkg/*.nupkg; do
   unzip $path "*.nuspec"
   mv "$package_id.nuspec" "nuspec/$package_id.$package_version.nuspec"
   xsltproc xsl/package-html.xslt "nuspec/$package_id.$package_version.nuspec" > html/$package.html
-  if ! inArray $package_id "${package_ids[@]}"; then
+  if ! in_array $package_id "${package_ids[@]}"; then
     package_ids+=($package_id)
   fi
 done
@@ -33,3 +44,4 @@ for package_id in "${package_ids[@]}"; do
 done
 xsltproc xsl/packages-manifest.xslt latest/*.nuspec | sed ':a;N;$!ba;s/<\/feed>\n<feed[^>]*>\n//g' | xsltproc xsl/packages-html.xslt - > html/index.html
 rm -f nuspec/*.nuspec latest/*.nuspec
+unlock
